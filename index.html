@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>週間スケジュール</title>
+    <style>
+      .week-schedule {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 50px;
+      }
+      .day {
+        width: 14%;
+        border: 1px solid #000;
+        min-height: 600px;
+        position: relative;
+      }
+      .activity {
+        padding: 10px;
+        margin: 5px;
+        color: #fff;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 5px;
+        cursor: move;
+      }
+      .outside-activities {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+      #activity-code {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        border: 1px solid #000;
+        padding: 10px;
+        background-color: #f1f1f1;
+      }
+      #reset-button,
+      #set-button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: #ffcccc;
+        border: 1px solid #000;
+        cursor: pointer;
+      }
+      #set-button {
+        background-color: #ccffcc;
+      }
+      #code-output {
+        width: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="outside-activities">
+      <div
+        class="activity"
+        style="background-color: #ff0000"
+        draggable="true"
+        id="A01"
+      >
+        アクティビティ1
+      </div>
+      <div
+        class="activity"
+        style="background-color: #00ff00"
+        draggable="true"
+        id="A02"
+      >
+        アクティビティ2
+      </div>
+      <div
+        class="activity"
+        style="background-color: #0000ff"
+        draggable="true"
+        id="A03"
+      >
+        アクティビティ3
+      </div>
+    </div>
+
+    <div class="week-schedule">
+      <div
+        class="day"
+        data-day="MON"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+      >
+        <h3>月曜日</h3>
+        <div class="total">合計: 0</div>
+      </div>
+      <div
+        class="day"
+        data-day="TUE"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+      >
+        <h3>火曜日</h3>
+        <div class="total">合計: 0</div>
+      </div>
+      <div
+        class="day"
+        data-day="WED"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+      >
+        <h3>水曜日</h3>
+        <div class="total">合計: 0</div>
+      </div>
+      <div
+        class="day"
+        data-day="THU"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+      >
+        <h3>木曜日</h3>
+        <div class="total">合計: 0</div>
+      </div>
+      <div
+        class="day"
+        data-day="FRI"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+      >
+        <h3>金曜日</h3>
+        <div class="total">合計: 0</div>
+      </div>
+      <div
+        class="day"
+        data-day="SAT"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+      >
+        <h3>土曜日</h3>
+        <div class="total">合計: 0</div>
+      </div>
+      <div
+        class="day"
+        data-day="SUN"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+      >
+        <h3>日曜日</h3>
+        <div class="total">合計: 0</div>
+      </div>
+    </div>
+
+    <div id="activity-code">
+      アクティビティコード:
+      <input type="text" id="code-output" />
+      <button id="reset-button">リセット</button>
+      <button id="set-button">セット</button>
+    </div>
+
+    <script>
+      function allowDrop(event) {
+        event.preventDefault();
+      }
+
+      function drag(event) {
+        event.dataTransfer.setData("text/plain", event.target.outerHTML);
+      }
+
+      function drop(event) {
+        event.preventDefault();
+        const data = event.dataTransfer.getData("text/plain");
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = data;
+
+        const activity = tempDiv.firstChild.cloneNode(true); // Clone the dragged element
+        activity.removeAttribute("id");
+
+        const dayElement = event.target.closest(".day");
+        if (dayElement && activity.classList.contains("activity")) {
+          dayElement.appendChild(activity);
+          updateActivityCode();
+          updateTotal(dayElement);
+        }
+
+        addDragEvents(activity);
+      }
+
+      function addDragEvents(activity) {
+        activity.addEventListener("dragstart", drag);
+        activity.addEventListener("dblclick", () => {
+          const dayElement = activity.closest(".day");
+          activity.remove();
+          updateActivityCode();
+          updateTotal(dayElement);
+        });
+        activity.addEventListener("contextmenu", (event) => {
+          event.preventDefault();
+
+          if (event.shiftKey && activity.previousElementSibling) {
+            activity.parentNode.insertBefore(
+              activity,
+              activity.previousElementSibling
+            );
+          } else if (!event.shiftKey && activity.nextElementSibling) {
+            activity.parentNode.insertBefore(
+              activity.nextElementSibling,
+              activity
+            );
+          }
+
+          updateActivityCode();
+          updateTotal(activity.closest(".day"));
+        });
+      }
+
+      document.querySelectorAll(".activity").forEach((item) => {
+        addDragEvents(item);
+      });
+
+      function updateActivityCode() {
+        let code = "";
+        document.querySelectorAll(".day").forEach((day) => {
+          const dayCode = day.getAttribute("data-day");
+          day.querySelectorAll(".activity").forEach((activity) => {
+            const activityText = activity.textContent.trim();
+            if (activityText === "アクティビティ1") {
+              code += dayCode + "A01";
+            } else if (activityText === "アクティビティ2") {
+              code += dayCode + "A02";
+            } else if (activityText === "アクティビティ3") {
+              code += dayCode + "A03";
+            }
+          });
+        });
+        document.getElementById("code-output").value = code;
+      }
+
+      function updateTotal(dayElement) {
+        const activities = dayElement.querySelectorAll(".activity");
+        const total = activities.length * 0.5;
+        const totalElement = dayElement.querySelector(".total");
+        totalElement.textContent = `合計: ${total}`;
+      }
+
+      function setActivityFromCode(code) {
+        document.querySelectorAll(".day").forEach((day) => {
+          // 各日のアクティビティをクリア
+          const activities = day.querySelectorAll(".activity");
+          activities.forEach((activity) => activity.remove());
+          updateTotal(day); // 合計値をリセット
+        });
+
+        for (let i = 0; i < code.length; i += 5) {
+          const dayCode = code.substring(i, i + 3);
+          const activityCode = code.substring(i + 3, i + 5);
+
+          const dayElement = document.querySelector(
+            `.day[data-day="${dayCode}"]`
+          );
+          if (!dayElement) continue;
+
+          const newActivity = document.createElement("div");
+          newActivity.classList.add("activity");
+          newActivity.setAttribute("draggable", "true");
+
+          if (activityCode === "A01") {
+            newActivity.style.backgroundColor = "#ff0000";
+            newActivity.textContent = "アクティビティ1";
+          } else if (activityCode === "A02") {
+            newActivity.style.backgroundColor = "#00ff00";
+            newActivity.textContent = "アクティビティ2";
+          } else if (activityCode === "A03") {
+            newActivity.style.backgroundColor = "#0000ff";
+            newActivity.textContent = "アクティビティ3";
+          }
+
+          if (newActivity.textContent.trim() !== "") {
+            dayElement.appendChild(newActivity);
+            addDragEvents(newActivity);
+          }
+        }
+
+        updateActivityCode();
+      }
+
+      // 初期アクティビティ設定
+      window.onload = function () {
+        const demoCode = "MONA01TUEA02WEDA03";
+        setActivityFromCode(demoCode);
+      };
+
+      // リセットボタン機能
+      document.getElementById("reset-button").addEventListener("click", () => {
+        document.querySelectorAll(".day").forEach((day) => {
+          const activities = day.querySelectorAll(".activity");
+          activities.forEach((activity) => activity.remove());
+          updateTotal(day);
+        });
+        updateActivityCode();
+      });
+
+      // セットボタン機能
+      document.getElementById("set-button").addEventListener("click", () => {
+        const code = document.getElementById("code-output").value;
+        setActivityFromCode(code);
+      });
+    </script>
+  </body>
+</html>
