@@ -61,27 +61,131 @@
     <div class="outside-activities">
       <div
         class="activity"
-        style="background-color: #ff0000"
+        style="background-color: #c79696"
         draggable="true"
         id="A01"
       >
-        アクティビティ1
+        植菌準備
       </div>
       <div
         class="activity"
-        style="background-color: #00ff00"
+        style="background-color: #85cf85"
         draggable="true"
         id="A02"
       >
-        アクティビティ2
+        収穫
       </div>
       <div
         class="activity"
-        style="background-color: #0000ff"
+        style="background-color: #8cadd3"
         draggable="true"
         id="A03"
       >
-        アクティビティ3
+        水源整備
+      </div>
+      <div
+        class="activity"
+        style="background-color: #c79696"
+        draggable="true"
+        id="A04"
+      >
+        袋詰め
+      </div>
+      <div
+        class="activity"
+        style="background-color: #c79696"
+        draggable="true"
+        id="A05"
+      >
+        植菌
+      </div>
+      <div
+        class="activity"
+        style="background-color: #c79696"
+        draggable="true"
+        id="A06"
+      >
+        点火・窯出し
+      </div>
+      <div
+        class="activity"
+        style="background-color: #c79696"
+        draggable="true"
+        id="A07"
+      >
+        栄養体準備
+      </div>
+      <div
+        class="activity"
+        style="background-color: #85cf85"
+        draggable="true"
+        id="A08"
+      >
+        菌床洗い
+      </div>
+      <div
+        class="activity"
+        style="background-color: #85cf85"
+        draggable="true"
+        id="A09"
+      >
+        菌床移動
+      </div>
+      <div
+        class="activity"
+        style="background-color: #85cf85"
+        draggable="true"
+        id="A10"
+      >
+        除袋
+      </div>
+      <div
+        class="activity"
+        style="background-color: #8cadd3"
+        draggable="true"
+        id="A11"
+      >
+        浸水出す
+      </div>
+      <div
+        class="activity"
+        style="background-color: #8cadd3"
+        draggable="true"
+        id="A12"
+      >
+        浸水入れる
+      </div>
+      <div
+        class="activity"
+        style="background-color: #8cadd3"
+        draggable="true"
+        id="A13"
+      >
+        菌床廃棄
+      </div>
+      <div
+        class="activity"
+        style="background-color: #e0d860"
+        draggable="true"
+        id="A14"
+      >
+        商品準備
+      </div>
+      <div
+        class="activity"
+        style="background-color: #e0d860"
+        draggable="true"
+        id="A15"
+      >
+        ﾊﾟｯｸ詰め
+      </div>
+      <div
+        class="activity"
+        style="background-color: #e0d860"
+        draggable="true"
+        id="A16"
+      >
+        出荷
       </div>
     </div>
 
@@ -225,12 +329,55 @@
           const dayCode = day.getAttribute("data-day");
           day.querySelectorAll(".activity").forEach((activity) => {
             const activityText = activity.textContent.trim();
-            if (activityText === "アクティビティ1") {
-              code += dayCode + "A01";
-            } else if (activityText === "アクティビティ2") {
-              code += dayCode + "A02";
-            } else if (activityText === "アクティビティ3") {
-              code += dayCode + "A03";
+            switch (activityText) {
+              case "植菌準備":
+                code += dayCode + "A01";
+                break;
+              case "収穫":
+                code += dayCode + "A02";
+                break;
+              case "水源整備":
+                code += dayCode + "A03";
+                break;
+              case "袋詰め":
+                code += dayCode + "A04";
+                break;
+              case "植菌":
+                code += dayCode + "A05";
+                break;
+              case "点火・窯出し":
+                code += dayCode + "A06";
+                break;
+              case "栄養体準備":
+                code += dayCode + "A07";
+                break;
+              case "菌床洗い":
+                code += dayCode + "A08";
+                break;
+              case "菌床移動":
+                code += dayCode + "A09";
+                break;
+              case "除袋":
+                code += dayCode + "A10";
+                break;
+              case "浸水出す":
+                code += dayCode + "A11";
+                break;
+              case "浸水入れる":
+                code += dayCode + "A12";
+                break;
+              case "菌床廃棄":
+                code += dayCode + "A13";
+                break;
+              case "商品準備":
+                code += dayCode + "A14";
+                break;
+              case "ﾊﾟｯｸ詰め":
+                code += dayCode + "A15";
+                break;
+              case "出荷":
+                code += dayCode + "A16";
+                break;
             }
           });
         });
@@ -265,15 +412,74 @@
           newActivity.classList.add("activity");
           newActivity.setAttribute("draggable", "true");
 
-          if (activityCode === "A01") {
-            newActivity.style.backgroundColor = "#ff0000";
-            newActivity.textContent = "アクティビティ1";
-          } else if (activityCode === "A02") {
-            newActivity.style.backgroundColor = "#00ff00";
-            newActivity.textContent = "アクティビティ2";
-          } else if (activityCode === "A03") {
-            newActivity.style.backgroundColor = "#0000ff";
-            newActivity.textContent = "アクティビティ3";
+          // アクティビティコードに応じてテキストと色を設定
+          switch (activityCode) {
+            case "A01":
+              newActivity.style.backgroundColor = "#c79696";
+              newActivity.textContent = "植菌準備";
+              break;
+            case "A02":
+              newActivity.style.backgroundColor = "#85cf85";
+              newActivity.textContent = "収穫";
+              break;
+            case "A03":
+              newActivity.style.backgroundColor = "#8cadd3";
+              newActivity.textContent = "水源整備";
+              break;
+            case "A04":
+              newActivity.style.backgroundColor = "#c79696";
+              newActivity.textContent = "袋詰め";
+              break;
+            case "A05":
+              newActivity.style.backgroundColor = "#c79696";
+              newActivity.textContent = "植菌";
+              break;
+            case "A06":
+              newActivity.style.backgroundColor = "#c79696";
+              newActivity.textContent = "点火・窯出し";
+              break;
+            case "A07":
+              newActivity.style.backgroundColor = "#c79696";
+              newActivity.textContent = "栄養体準備";
+              break;
+            case "A08":
+              newActivity.style.backgroundColor = "#85cf85";
+              newActivity.textContent = "菌床洗い";
+              break;
+            case "A09":
+              newActivity.style.backgroundColor = "#85cf85";
+              newActivity.textContent = "菌床移動";
+              break;
+            case "A10":
+              newActivity.style.backgroundColor = "#85cf85";
+              newActivity.textContent = "除袋";
+              break;
+            case "A11":
+              newActivity.style.backgroundColor = "#8cadd3";
+              newActivity.textContent = "浸水出す";
+              break;
+            case "A12":
+              newActivity.style.backgroundColor = "#8cadd3";
+              newActivity.textContent = "浸水入れる";
+              break;
+            case "A13":
+              newActivity.style.backgroundColor = "#8cadd3";
+              newActivity.textContent = "菌床廃棄";
+              break;
+            case "A14":
+              newActivity.style.backgroundColor = "#e0d860";
+              newActivity.textContent = "商品準備";
+              break;
+            case "A15":
+              newActivity.style.backgroundColor = "#e0d860";
+              newActivity.textContent = "ﾊﾟｯｸ詰め";
+              break;
+            case "A16":
+              newActivity.style.backgroundColor = "#e0d860";
+              newActivity.textContent = "出荷";
+              break;
+            default:
+              continue;
           }
 
           if (newActivity.textContent.trim() !== "") {
@@ -312,7 +518,6 @@
         const codeOutput = document.getElementById("code-output");
         codeOutput.select();
         document.execCommand("copy");
-        alert("アクティビティコードがコピーされました！");
       });
     </script>
   </body>
