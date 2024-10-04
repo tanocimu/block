@@ -247,9 +247,9 @@
           updateTotal(day); // 合計値をリセット
         });
 
-        for (let i = 0; i < code.length; i += 5) {
+        for (let i = 0; i < code.length; i += 6) {
           const dayCode = code.substring(i, i + 3);
-          const activityCode = code.substring(i + 3, i + 5);
+          const activityCode = code.substring(i + 3, i + 6);
 
           const dayElement = document.querySelector(
             `.day[data-day="${dayCode}"]`
@@ -274,9 +274,9 @@
           if (newActivity.textContent.trim() !== "") {
             dayElement.appendChild(newActivity);
             addDragEvents(newActivity);
+            updateTotal(dayElement); // 合計値を更新
           }
         }
-
         updateActivityCode();
       }
 
