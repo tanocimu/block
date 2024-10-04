@@ -38,7 +38,8 @@
         background-color: #f1f1f1;
       }
       #reset-button,
-      #set-button {
+      #set-button,
+      #copy-button {
         margin-left: 10px;
         padding: 5px 10px;
         background-color: #ffcccc;
@@ -47,6 +48,9 @@
       }
       #set-button {
         background-color: #ccffcc;
+      }
+      #copy-button {
+        background-color: #ccccff;
       }
       #code-output {
         width: 200px;
@@ -152,6 +156,7 @@
       <input type="text" id="code-output" />
       <button id="reset-button">リセット</button>
       <button id="set-button">セット</button>
+      <button id="copy-button">コピー</button>
     </div>
 
     <script>
@@ -300,6 +305,14 @@
       document.getElementById("set-button").addEventListener("click", () => {
         const code = document.getElementById("code-output").value;
         setActivityFromCode(code);
+      });
+
+      // コピー機能の実装
+      document.getElementById("copy-button").addEventListener("click", () => {
+        const codeOutput = document.getElementById("code-output");
+        codeOutput.select();
+        document.execCommand("copy");
+        alert("アクティビティコードがコピーされました！");
       });
     </script>
   </body>
