@@ -264,33 +264,61 @@
     </div>
 
     <script>
+      let draggedElement = null;
+      let sourceElement = null;
+
       function allowDrop(event) {
         event.preventDefault();
       }
 
       function drag(event) {
-        event.dataTransfer.setData("text/plain", event.target.outerHTML);
+        // ドラッグされた要素を保持（コピーするためのもの）
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = event.target.outerHTML;
+        draggedElement = tempDiv.firstChild;
+
+        // 元の要素を保存（枠内の要素を移動した際に削除するため）
+        sourceElement = event.target.closest(".activity");
       }
 
       function drop(event) {
         event.preventDefault();
-        const data = event.dataTransfer.getData("text/plain");
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = data;
-
-        const activity = tempDiv.firstChild.cloneNode(true); // Clone the dragged element
-        activity.removeAttribute("id");
-
         const dayElement = event.target.closest(".day");
-        if (dayElement && activity.classList.contains("activity")) {
-          dayElement.appendChild(activity);
+        const targetElement = event.target.closest(".activity");
+
+        if (dayElement) {
+          const activityClone = draggedElement.cloneNode(true); // ドラッグされた要素を複製
+          activityClone.removeAttribute("id"); // 複製された要素のIDを削除
+          addDragEvents(activityClone); // 複製された要素にドラッグイベントを追加
+
+          if (targetElement) {
+            // 他のアクティビティがある場所にドラッグされた場合、入れ替え
+            const parent = targetElement.parentNode;
+            const draggedNext =
+              activityClone.nextElementSibling === targetElement;
+
+            parent.insertBefore(
+              activityClone,
+              draggedNext ? targetElement.nextElementSibling : targetElement
+            );
+          } else {
+            // 空の枠に追加
+            dayElement.appendChild(activityClone);
+          }
+
+          // 移動元の要素を削除
+          if (sourceElement && sourceElement.closest(".day")) {
+            sourceElement.remove();
+          }
+
+          // 合計値とアクティビティコードを更新
           updateActivityCode();
           updateTotal(dayElement);
+          updateTotal(sourceElement.closest(".day"));
         }
-
-        addDragEvents(activity);
       }
 
+      // アクティビティにドラッグイベントを追加
       function addDragEvents(activity) {
         activity.addEventListener("dragstart", drag);
         activity.addEventListener("dblclick", () => {
@@ -319,6 +347,7 @@
         });
       }
 
+      // 既存のアクティビティにドラッグイベントを追加
       document.querySelectorAll(".activity").forEach((item) => {
         addDragEvents(item);
       });
