@@ -72,6 +72,46 @@
 <body>
 
   <?php
+  // DB接続関数
+  function db_access()
+  {
+    $user = 'kinokonosato';
+    $pass = 'P00027511wy3';
+    $dbnm = 'kinokonosato';
+    $host = 'localhost';
+    $connect = "mysql:host={$host};dbname={$dbnm}";
+
+    try {
+      $pdo = new PDO($connect, $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+      $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (Exception $e) {
+      // 運用環境ではエラーメッセージを直接出力しない
+      error_log($e->getMessage());
+      echo "<p>DB接続エラーが発生しました。</p>";
+      exit();
+    }
+
+    return $pdo;
+  }
+
+  // アクティビティコードをDBから取得する関数
+  function get_activitycodes()
+  {
+    $pdo = db_access();
+    try {
+      // クエリ実行
+      $stmt = $pdo->query("SELECT * FROM groupware_block ORDER BY updatetime DESC");
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+      // エラーメッセージをログに記録
+      error_log($e->getMessage());
+      echo "<p>アクティビティコードの取得時にエラーが発生しました。</p>";
+    }
+    return [];
+  }
+
+
   // アクティビティの配列
   $activities = [
     ["id" => "A01", "name" => "植菌準備", "color" => "#c79696"],
@@ -91,6 +131,7 @@
     ["id" => "A15", "name" => "ﾊﾟｯｸ詰め", "color" => "#e0d860"],
     ["id" => "A16", "name" => "出荷", "color" => "#e0d860"],
   ];
+
   ?>
 
   <!-- アクティビティリストの動的生成 -->
@@ -122,12 +163,27 @@
     <?php endforeach; ?>
   </div>
 
+  <!-- アクティビティコードセクション -->
   <div id="activity-code">
     アクティビティコード:
     <input type="text" id="code-output" />
     <button id="reset-button">リセット</button>
     <button id="set-button">セット</button>
     <button id="copy-button">コピー</button>
+    <button id="save-db-button">DBへ保存</button>
+  </div>
+
+  <!-- DBから取得したアクティビティコードの表示 -->
+  <div id="db-activitycodes">
+    <h3>保存されたアクティビティコード</h3>
+    <ul id="activity-list">
+      <?php
+      $saved_codes = get_activitycodes();
+      foreach ($saved_codes as $code) {
+        echo "<li>{$code['updatetime']}: {$code['activitycode']} - 作者: {$code['author']}</li>";
+      }
+      ?>
+    </ul>
   </div>
 
   <script>
@@ -385,6 +441,27 @@
       const codeOutput = document.getElementById("code-output");
       codeOutput.select();
       document.execCommand("copy");
+    });
+
+    document.getElementById('save-db-button').addEventListener('click', function() {
+      // 入力フィールドの値を取得
+      var code = document.getElementById('code-output').value;
+
+      // AjaxリクエストでPHPにデータを送信
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'save_activitycode.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          alert('アクティビティコードが保存されました');
+        } else {
+          alert('保存に失敗しました');
+        }
+      };
+
+      // 入力されたコードをサーバーに送信
+      xhr.send('code=' + encodeURIComponent(code));
     });
   </script>
 
